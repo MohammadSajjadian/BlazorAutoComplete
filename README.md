@@ -72,6 +72,23 @@ private async Task OnSelectedItemsChanged(List<YourItemType> items)
 }
 ```
 
+---
+
+## Demo
+
+Here’s how the **Blazor AutoComplete** component looks in action 👇
+
+### Demo Video
+![Untitled design](https://github.com/user-attachments/assets/679db2d8-267a-43ff-afa5-23560f718938)
+
+
+
+
+### Black mode
+<img width="1558" height="267" alt="Screenshot 2025-10-16 173243" src="https://github.com/user-attachments/assets/b4112a63-4c99-4a4c-9e49-0a7266e67b37" />
+
+---
+
 ## Notes
 
 - Ensure `DisplayItem` is set for custom types; otherwise, `.ToString()` is used.
