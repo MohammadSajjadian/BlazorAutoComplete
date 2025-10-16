@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<Authors>Mohammad Sajjadian</Authors>
+		<Company>Mohammad Sajjadian</Company>
+		<PackageId>MSJD.AutoComplete</PackageId>
+		<Version>1.0.0</Version>
+		<Description>A modern Blazor AutoComplete component with light/dark mode support</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/MohammadSajjadian/BlazorAutoComplete</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/MohammadSajjadian/BlazorAutoComplete</PackageProjectUrl>
+		<PackageTags>Blazor;Autocomplete;UI;Component</PackageTags>
+		<Copyright>MIT</Copyright>
+	</PropertyGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="[9.0.0,)" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="[8.0.0,)" />
+	</ItemGroup>
+</Project>

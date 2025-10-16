@@ -1,0 +1,103 @@
+﻿/* =========================
+   Autocomplete Container
+   ========================= */
+.autocomplete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--autocomplete-border);
+    border-radius: 0.25rem;
+    background-color: var(--autocomplete-bg);
+    color: var(--autocomplete-text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-height: 38px;
+}
+
+    .autocomplete:focus-within {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* =========================
+   Input Styles
+   ========================= */
+    .autocomplete input[type="search"] {
+        border: none;
+        background-color: var(--autocomplete-bg);
+        color: var(--autocomplete-text);
+        font-size: 0.95rem;
+        outline: none;
+        flex: 1 1 120px;
+        min-width: 100px;
+        padding: 0.25rem 0.5rem;
+    }
+
+/* =========================
+   Chip Styles
+   ========================= */
+.autocomplete-chip {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--autocomplete-border);
+    background-color: var(--chip-bg);
+    color: var(--chip-text);
+    border-radius: 1rem; /* Rounded corners */
+    padding: 0.25rem 0.75rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+    .autocomplete-chip:hover {
+        background-color: var(--chip-hover-bg);
+        border-color: #0d6efd;
+    }
+
+    .autocomplete-chip .btn-close {
+        font-size: 0.7rem;
+        margin-left: 0.4rem;
+        opacity: 0.7;
+    }
+
+/* =========================
+   Dropdown Styles
+   ========================= */
+.autocomplete-select {
+    background-color: var(--autocomplete-bg);
+    color: var(--autocomplete-text);
+    border: 1px solid var(--autocomplete-border);
+    border-radius: 0.25rem;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+/* =========================
+   Theme Variables
+   ========================= */
+:root {
+    --autocomplete-bg: #fff;
+    --autocomplete-border: #ced4da;
+    --autocomplete-text: #000;
+    --chip-bg: #f8f9fa;
+    --chip-text: #000;
+    --chip-hover-bg: #e9f2ff;
+}
+
+.autocomplete.dark-mode {
+    --autocomplete-bg: #2b2b2b;
+    --autocomplete-border: #555;
+    --autocomplete-text: #d9dbdd;
+    --chip-bg: #3a3a3a;
+    --chip-text: #fff;
+    --chip-hover-bg: #444;
+}
+
+.autocomplete.light-mode {
+    --autocomplete-bg: #fff;
+    --autocomplete-border: #ced4da;
+    --autocomplete-text: #000;
+    --chip-bg: #f8f9fa;
+    --chip-text: #000;
+    --chip-hover-bg: #e9f2ff;
+}
