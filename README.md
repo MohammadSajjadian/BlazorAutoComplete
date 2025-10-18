@@ -1,6 +1,6 @@
 # Blazor AutoComplete Component
 
-[![NuGet](https://img.shields.io/nuget/v/YourPackageName.svg)](https://www.nuget.org/packages/YourPackageName)  
+[![NuGet](https://img.shields.io/nuget/v/MSJD.AutoComplete.svg)](https://www.nuget.org/packages/MSJD.AutoComplete)  
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A flexible and reusable AutoComplete component for Blazor that supports multi-selection, custom display logic, dark/light mode, and keyboard navigation.
