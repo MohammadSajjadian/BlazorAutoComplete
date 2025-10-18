@@ -1,7 +1,9 @@
 ﻿@typeparam TItem
 
 <div class="autocomplete position-relative @(DarkMode ? "dark-mode" : "light-mode")"
-     @onfocusout="HandleFocusOut">
+     @onfocusout="HandleFocusOut"
+     style="display:flex; flex-wrap:wrap; align-items:center; border:1px solid #ced4da; border-radius:.25rem; padding:.25rem; min-height:38px;">
+
     @foreach (var item in selectedItems)
     {
         <span class="autocomplete-chip">
@@ -18,28 +20,32 @@
            @onkeydown="HandleKeyDown"
            @onfocus="ShowAllItems"
            placeholder="@Placeholder"
-           disabled="@IsDisabled" />
-</div>
+           disabled="@IsDisabled"
+           class="flex-grow-1 border-0"
+           style="min-width:120px; outline:none;" />
 
-@if (isDropdownOpen)
-{
-    <select class="autocomplete-select form-select mt-1"
-            size="5"
-            style="@(DarkMode ? "background-color: #2b2b2b; color: #d9dbdd" : "")"
-            @onchange="HandleSelectChange">
-        @if (filteredItems.Any())
-        {
-            @foreach (var item in filteredItems)
+    @if (isDropdownOpen)
+    {
+        <div class="autocomplete-dropdown position-absolute"
+             style="width:100%; max-height:200px; overflow-y:auto; z-index:1000; top:100%; left:0; @(DarkMode ? "background-color:#2b2b2b;color:#d9dbdd;" : "background-color:white;")">
+            @if (filteredItems.Any())
             {
-                <option value="@DisplayItem(item)">@DisplayItem(item)</option>
+                @for (int i = 0; i < filteredItems.Count; i++)
+                {
+                    var item = filteredItems[i];
+                    <div class="px-3 py-2 cursor-pointer @(i == highlightedIndex ? "bg-primary text-white" : "")"
+                         @onclick="() => SelectItem(item)">
+                        @DisplayItem(item)
+                    </div>
+                }
             }
-        }
-        else if (!string.IsNullOrEmpty(typedWord))
-        {
-            <option disabled>@EmptyText</option>
-        }
-    </select>
-}
+            else if (!string.IsNullOrEmpty(typedWord))
+            {
+                <div class="px-3 py-2 text-muted small">@EmptyText</div>
+            }
+        </div>
+    }
+</div>
 
 @code {
     [Parameter, EditorRequired] public List<TItem> Items { get; set; } = [];
@@ -51,12 +57,12 @@
     [Parameter] public bool DarkMode { get; set; }
 
     private string typedWord = string.Empty;
-    private string searchedWord = string.Empty;
     private List<TItem> filteredItems = [];
     private List<TItem> selectedItems { get; set; } = [];
     private List<TItem> copyItems = [];
     private ElementReference inputRef = default!;
     private bool isDropdownOpen;
+    private int highlightedIndex = -1;
 
     protected override void OnInitialized()
     {
@@ -70,11 +76,13 @@
             filteredItems = copyItems
                 .Where(i => DisplayItem(i).Contains(typedWord, StringComparison.OrdinalIgnoreCase) && !selectedItems.Contains(i))
                 .ToList();
-            isDropdownOpen = true;
+            highlightedIndex = filteredItems.Any() ? 0 : -1;
+            isDropdownOpen = filteredItems.Any();
         }
         else
         {
             filteredItems.Clear();
+            highlightedIndex = -1;
             isDropdownOpen = false;
         }
     }
@@ -86,6 +94,7 @@
             selectedItems.Add(item);
             typedWord = string.Empty;
             filteredItems.Clear();
+            highlightedIndex = -1;
             await SelectedItemsChanged.InvokeAsync(selectedItems);
             await inputRef.FocusAsync();
         }
@@ -96,6 +105,7 @@
         filteredItems = copyItems
             .Where(i => !selectedItems.Contains(i))
             .ToList();
+        highlightedIndex = filteredItems.Any() ? 0 : -1;
         isDropdownOpen = filteredItems.Any();
     }
 
@@ -112,17 +122,40 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
+        if (!isDropdownOpen) return;
+
         switch (e.Key)
         {
+            case "ArrowDown":
+                if (filteredItems.Any())
+                {
+                    highlightedIndex = (highlightedIndex + 1) % filteredItems.Count;
+                    StateHasChanged();
+                }
+                break;
+            case "ArrowUp":
+                if (filteredItems.Any())
+                {
+                    highlightedIndex = (highlightedIndex - 1 + filteredItems.Count) % filteredItems.Count;
+                    StateHasChanged();
+                }
+                break;
+            case "Enter":
+                if (highlightedIndex >= 0 && highlightedIndex < filteredItems.Count)
+                {
+                    await SelectItem(filteredItems[highlightedIndex]);
+                }
+                break;
             case "Backspace" when string.IsNullOrEmpty(typedWord) && selectedItems.Any():
                 var lastItem = selectedItems.Last();
                 selectedItems.Remove(lastItem);
                 await SelectedItemsChanged.InvokeAsync(selectedItems);
                 SearchItem();
                 break;
-
             case "Escape":
                 filteredItems.Clear();
+                highlightedIndex = -1;
+                isDropdownOpen = false;
                 break;
         }
     }
@@ -131,16 +164,5 @@
     {
         await Task.Delay(150);
         isDropdownOpen = false;
-    }
-
-    private async Task HandleSelectChange(ChangeEventArgs e)
-    {
-        var value = e.Value?.ToString();
-        if (string.IsNullOrEmpty(value))
-            return;
-
-        var selected = filteredItems.FirstOrDefault(x => DisplayItem(x) == value);
-        if (selected != null)
-            await SelectItem(selected);
     }
 }

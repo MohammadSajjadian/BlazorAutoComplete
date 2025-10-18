@@ -1,24 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
 	<PropertyGroup>
 		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<Authors>Mohammad Sajjadian</Authors>
 		<Company>Mohammad Sajjadian</Company>
 		<PackageId>MSJD.AutoComplete</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.1.0</Version>
 		<Description>A modern Blazor AutoComplete component with light/dark mode support</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/MohammadSajjadian/BlazorAutoComplete</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/MohammadSajjadian/BlazorAutoComplete</PackageProjectUrl>
 		<PackageTags>Blazor;Autocomplete;UI;Component</PackageTags>
 		<Copyright>MIT</Copyright>
+		<PackageIcon>brand-logo.png</PackageIcon>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
+
+	<!-- Include icon in package -->
+	<ItemGroup>
+		<None Include="wwwroot/brand-logo.png">
+			<Pack>True</Pack>
+			<PackagePath>/</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<!-- Supported platform -->
 	<ItemGroup>
 		<SupportedPlatform Include="browser" />
 	</ItemGroup>
+
+	<!-- Package references per target framework -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="[9.0.0,)" />
 	</ItemGroup>
+
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="[8.0.0,)" />
 	</ItemGroup>
+
 </Project>
