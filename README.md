@@ -25,7 +25,7 @@ A flexible and reusable AutoComplete component for Blazor that supports multi-se
 Install via .NET CLI:
 
 ```.NET CLI
-dotnet add package MSJD.AutoComplete --version 1.0.0
+dotnet add package MSJD.AutoComplete --version 1.1.0
 ```
 
 
