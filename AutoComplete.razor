@@ -4,10 +4,17 @@
      @onfocusout="HandleFocusOut"
      style="display:flex; flex-wrap:wrap; align-items:center; border:1px solid #ced4da; border-radius:.25rem; padding:.25rem; min-height:38px;">
 
-    @foreach (var item in selectedItems)
+    @foreach (var item in SelectedItemsInternal)
     {
         <span class="autocomplete-chip">
-            @DisplayItem(item)
+            @if (ChipTemplate is not null)
+            {
+                @ChipTemplate(item)
+            }
+            else
+            {
+                @ItemText(item)
+            }
             <button type="button" class="btn-close" @onclick="() => RemoveItem(item)"></button>
         </span>
     }
@@ -19,7 +26,7 @@
            @bind:after="SearchItem"
            @onkeydown="HandleKeyDown"
            @onfocus="ShowAllItems"
-           placeholder="@Placeholder"
+           placeholder="@PlaceholderText"
            disabled="@IsDisabled"
            class="flex-grow-1 border-0"
            style="min-width:120px; outline:none;" />
@@ -35,49 +42,113 @@
                     var item = filteredItems[i];
                     <div class="px-3 py-2 cursor-pointer @(i == highlightedIndex ? "bg-primary text-white" : "")"
                          @onclick="() => SelectItem(item)">
-                        @DisplayItem(item)
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                        else
+                        {
+                            @ItemText(item)
+                        }
                     </div>
                 }
             }
-            else if (!string.IsNullOrEmpty(typedWord))
+            else
             {
-                <div class="px-3 py-2 text-muted small">@EmptyText</div>
+                <div class="px-3 py-2 text-muted small">@EmptyMessage</div>
             }
         </div>
     }
 </div>
 
 @code {
-    [Parameter, EditorRequired] public List<TItem> Items { get; set; } = [];
-    [Parameter] public EventCallback<List<TItem>> SelectedItemsChanged { get; set; }
-    [Parameter] public Func<TItem, string> DisplayItem { get; set; } = item => item?.ToString() ?? "";
-    [Parameter] public string EmptyText { get; set; } = "No record found...";
-    [Parameter] public string Placeholder { get; set; } = "Type to search...";
-    [Parameter] public bool IsDisabled { get; set; }
-    [Parameter] public bool DarkMode { get; set; }
+    /// <summary>
+    /// The list of all items available to select.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public List<TItem> AllItems { get; set; } = [];
+
+    /// <summary>
+    /// The list of items that are currently selected by the user.
+    /// </summary>
+    [Parameter]
+    public List<TItem> SelectedItems { get; set; } = [];
+
+    /// <summary>
+    /// Event callback triggered whenever the selected items list changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<List<TItem>> SelectedItemsChanged { get; set; }
+
+    /// <summary>
+    /// Function that defines how to display an item as text when no template is provided.
+    /// This is particularly useful for complex objects, so you can specify which property
+    /// or combination of properties should appear as the default text.
+    /// </summary>
+    [Parameter]
+    public Func<TItem, string> ItemText { get; set; } = item => item?.ToString() ?? "";
+
+    /// <summary>
+    /// Placeholder text displayed in the input box.
+    /// </summary>
+    [Parameter]
+    public string PlaceholderText { get; set; } = "Type to search...";
+
+    /// <summary>
+    /// Text to display when no matching items are found.
+    /// </summary>
+    [Parameter]
+    public string EmptyMessage { get; set; } = "No record found...";
+
+    /// <summary>
+    /// Whether the autocomplete input should be disabled.
+    /// </summary>
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    /// <summary>
+    /// Whether to apply dark mode styling.
+    /// </summary>
+    [Parameter]
+    public bool DarkMode { get; set; }
+
+    /// <summary>
+    /// Optional template for rendering each item in the dropdown.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? ItemTemplate { get; set; }
+
+    /// <summary>
+    /// Optional template for rendering each selected item as a chip.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? ChipTemplate { get; set; }
 
     private string typedWord = string.Empty;
     private List<TItem> filteredItems = [];
-    private List<TItem> selectedItems { get; set; } = [];
-    private List<TItem> copyItems = [];
+    private List<TItem> copyAllItems = [];
+    private List<TItem> SelectedItemsInternal = [];
     private ElementReference inputRef = default!;
     private bool isDropdownOpen;
     private int highlightedIndex = -1;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        copyItems = Items.ToList();
+        copyAllItems = AllItems.ToList();
+        SelectedItemsInternal = SelectedItems.ToList();
+        await SelectedItemsChanged.InvokeAsync(SelectedItemsInternal);
     }
 
     private void SearchItem()
     {
         if (!string.IsNullOrEmpty(typedWord))
         {
-            filteredItems = copyItems
-                .Where(i => DisplayItem(i).Contains(typedWord, StringComparison.OrdinalIgnoreCase) && !selectedItems.Contains(i))
+            filteredItems = copyAllItems
+                .Where(i => ItemText(i).Contains(typedWord, StringComparison.OrdinalIgnoreCase)
+                         && !SelectedItemsInternal.Contains(i))
                 .ToList();
             highlightedIndex = filteredItems.Any() ? 0 : -1;
-            isDropdownOpen = filteredItems.Any();
+            isDropdownOpen = true;
         }
         else
         {
@@ -89,21 +160,21 @@
 
     private async Task SelectItem(TItem item)
     {
-        if (!selectedItems.Contains(item))
+        if (!SelectedItemsInternal.Contains(item))
         {
-            selectedItems.Add(item);
+            SelectedItemsInternal.Add(item);
             typedWord = string.Empty;
             filteredItems.Clear();
             highlightedIndex = -1;
-            await SelectedItemsChanged.InvokeAsync(selectedItems);
+            await SelectedItemsChanged.InvokeAsync(SelectedItemsInternal);
             await inputRef.FocusAsync();
         }
     }
 
     private void ShowAllItems()
     {
-        filteredItems = copyItems
-            .Where(i => !selectedItems.Contains(i))
+        filteredItems = copyAllItems
+            .Where(i => !SelectedItemsInternal.Contains(i))
             .ToList();
         highlightedIndex = filteredItems.Any() ? 0 : -1;
         isDropdownOpen = filteredItems.Any();
@@ -111,10 +182,10 @@
 
     private async Task RemoveItem(TItem item)
     {
-        if (selectedItems.Contains(item))
+        if (SelectedItemsInternal.Contains(item))
         {
-            selectedItems.Remove(item);
-            await SelectedItemsChanged.InvokeAsync(selectedItems);
+            SelectedItemsInternal.Remove(item);
+            await SelectedItemsChanged.InvokeAsync(SelectedItemsInternal);
             SearchItem();
             await inputRef.FocusAsync();
         }
@@ -122,6 +193,23 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
+        if (e.Key == "Backspace" && string.IsNullOrEmpty(typedWord) && SelectedItemsInternal.Any())
+        {
+            var lastItem = SelectedItemsInternal.Last();
+            SelectedItemsInternal.Remove(lastItem);
+            await SelectedItemsChanged.InvokeAsync(SelectedItemsInternal);
+            SearchItem();
+            return;
+        }
+
+        if (e.Key == "Escape")
+        {
+            filteredItems.Clear();
+            highlightedIndex = -1;
+            isDropdownOpen = false;
+            return;
+        }
+
         if (!isDropdownOpen) return;
 
         switch (e.Key)
@@ -145,17 +233,6 @@
                 {
                     await SelectItem(filteredItems[highlightedIndex]);
                 }
-                break;
-            case "Backspace" when string.IsNullOrEmpty(typedWord) && selectedItems.Any():
-                var lastItem = selectedItems.Last();
-                selectedItems.Remove(lastItem);
-                await SelectedItemsChanged.InvokeAsync(selectedItems);
-                SearchItem();
-                break;
-            case "Escape":
-                filteredItems.Clear();
-                highlightedIndex = -1;
-                isDropdownOpen = false;
                 break;
         }
     }

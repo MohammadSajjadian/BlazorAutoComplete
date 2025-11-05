@@ -5,7 +5,7 @@
 		<Authors>Mohammad Sajjadian</Authors>
 		<Company>Mohammad Sajjadian</Company>
 		<PackageId>MSJD.AutoComplete</PackageId>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 		<Description>A modern Blazor AutoComplete component with light/dark mode support</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/MohammadSajjadian/BlazorAutoComplete</RepositoryUrl>
