@@ -8,16 +8,12 @@ A flexible and reusable AutoComplete component for Blazor that supports multi-se
 ---
 
 ## Features
-
-- Generic support (`@typeparam TItem`) to handle any type.
-- Multi-select with removable chips.
-- Search-as-you-type with case-insensitive filtering.
-- Keyboard support (`Backspace` removes last item, `Escape` closes dropdown).
-- Dropdown displaying filtered items.
-- Dark/Light mode styling.
-- Customizable placeholders and empty state text.
-- Event callback for selected items change.
-
+- Generic Multi-Select: Supports any type (@typeparam TItem) with multiple selectable items.
+- Customizable Display: ItemTemplate for dropdown items, ChipTemplate for selected chips, and ItemText for complex types.
+- Search-As-You-Type: Case-insensitive filtering of items.
+- Keyboard Support: Backspace removes last item, Escape closes dropdown, Arrow keys navigate, Enter selects.
+- Dark/Light Mode Styling: Toggle styling via the DarkMode parameter.
+- Event Callback: SelectedItemsChanged triggers whenever selection changes.
 ---
 
 ## Installation
