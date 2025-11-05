@@ -1,6 +1,6 @@
 # Blazor AutoComplete Component
 
-[![NuGet](https://img.shields.io/nuget/v/YourPackageName.svg)](https://www.nuget.org/packages/YourPackageName)  
+[![NuGet](https://img.shields.io/nuget/v/MSJD.AutoComplete.svg)](https://www.nuget.org/packages/MSJD.AutoComplete)  
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A flexible and reusable AutoComplete component for Blazor that supports multi-selection, custom display logic, dark/light mode, and keyboard navigation.
@@ -25,7 +25,7 @@ A flexible and reusable AutoComplete component for Blazor that supports multi-se
 Install via .NET CLI:
 
 ```.NET CLI
-dotnet add package MSJD.AutoComplete --version 1.0.0
+dotnet add package MSJD.AutoComplete --version 1.1.0
 ```
 
 
@@ -87,6 +87,7 @@ Here’s how the **Blazor AutoComplete** component looks in action 👇
 ### Dark mode
 <img width="1558" height="267" alt="Screenshot 2025-10-16 173243" src="https://github.com/user-attachments/assets/b4112a63-4c99-4a4c-9e49-0a7266e67b37" />
 
+See the live demo on: www.mohammadsajjadian.ir/demo/auto-complete
 ---
 
 ## Notes
