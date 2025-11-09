@@ -29,27 +29,30 @@ dotnet add package MSJD.AutoComplete --version 1.2.0
 
 ```razor
 <AutoComplete TItem="YourItemType"
-              Items="YourItemList"
-              DisplayItem="item => item.Name"
-              Placeholder="Search items..."
-              EmptyText="No items found"
+              AllItems="YourItemList"
+              SelectedItems="SelectedItems"
+              ItemText="item => item.Name"
+              PlaceholderText="Search items..."
+              EmptyMessage="No items found"
               DarkMode="true"
               SelectedItemsChanged="OnSelectedItemsChanged" />
-
 ```
 
 
 ## Parameters
 
-| Parameter               | Type                           | Description                                                                                  |
-|-------------------------|--------------------------------|----------------------------------------------------------------------------------------------|
-| `Items`                 | `List<TItem>`                  | List of items to search from. **Required.**                                                  |
-| `SelectedItemsChanged`  | `EventCallback<List<TItem>>`   | Invoked when selected items change.                                                         |
-| `DisplayItem`           | `Func<TItem, string>`          | Function to define how each item is displayed. Defaults to `item.ToString()`.               |
-| `EmptyText`             | `string`                        | Text displayed when no matching item is found. Default: `"No record found..."`.             |
-| `Placeholder`           | `string`                        | Input placeholder text. Default: `"Type to search..."`.                                      |
-| `IsDisabled`            | `bool`                          | Disables input when `true`.                                                                 |
-| `DarkMode`              | `bool`                          | Enables dark mode styling when `true`.                                                      |
+| Parameter              | Type                         | Description                                                                                                                      |
+|------------------------|------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `AllItems`             | `List<TItem>`                | The list of all items available to select. **Required.**                                                                         |
+| `SelectedItems`        | `List<TItem>`                | The list of items currently selected by the user.                                                                                |
+| `SelectedItemsChanged` | `EventCallback<List<TItem>>` | Invoked whenever the selected items list changes.                                                                                |
+| `ItemText`             | `Func<TItem, string>`        | Function defining how to display an item as text when no template is provided. Defaults to `item => item?.ToString() ?? ""`.     |
+| `PlaceholderText`      | `string`                     | Text displayed in the input box when empty. Default: `"Type to search..."`.                                                      |
+| `EmptyMessage`         | `string`                     | Text shown when no matching items are found. Default: `"No record found..."`.                                                    |
+| `IsDisabled`           | `bool`                       | Disables the autocomplete input when `true`.                                                                                     |
+| `DarkMode`             | `bool`                       | Enables dark mode styling when `true`.                                                                                           |
+| `ItemTemplate`         | `RenderFragment<TItem>`      | Optional template for rendering each item in the dropdown.                                                                       |
+| `ChipTemplate`         | `RenderFragment<TItem>`      | Optional template for rendering each selected item as a chip.                                                                    |
 
 ---
 
@@ -75,13 +78,11 @@ private async Task OnSelectedItemsChanged(List<YourItemType> items)
 Here’s how the **Blazor AutoComplete** component looks in action 👇
 
 ### Demo Video
-![Untitled design](https://github.com/user-attachments/assets/679db2d8-267a-43ff-afa5-23560f718938)
-
-
+![Untitled design (1)](https://github.com/user-attachments/assets/c29c4231-170a-40f8-854d-3023a151a97e)
 
 
 ### Dark mode
-<img width="1558" height="267" alt="Screenshot 2025-10-16 173243" src="https://github.com/user-attachments/assets/b4112a63-4c99-4a4c-9e49-0a7266e67b37" />
+<img width="966" height="180" alt="Screenshot 2025-11-09 213402" src="https://github.com/user-attachments/assets/d3c0c608-0fb4-4122-9f44-5ab4569ec6f5" />
 
 See the live demo on: www.mohammadsajjadian.ir/demo/auto-complete
 ---
