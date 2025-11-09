@@ -25,17 +25,66 @@ dotnet add package MSJD.AutoComplete --version 1.2.0
 ```
 
 
-## Add the component to your Blazor project
+## Code Sample
 
 ```razor
-<AutoComplete TItem="YourItemType"
-              AllItems="YourItemList"
-              SelectedItems="SelectedItems"
+@page "/auto-complete"
+@rendermode InteractiveServer
+
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>AutoComplete Demo</PageTitle>
+
+<h3 class="mb-3">AutoComplete Demo</h3>
+
+<AutoComplete TItem="Product"
+              AllItems="AllProducts"
+              SelectedItems="SelectedProducts"
               ItemText="item => item.Name"
-              PlaceholderText="Search items..."
-              EmptyMessage="No items found"
+              PlaceholderText="Search products..."
+              EmptyMessage="No products found"
               DarkMode="true"
               SelectedItemsChanged="OnSelectedItemsChanged" />
+
+@if (SelectedProducts?.Any() == true)
+{
+    <h5 class="mt-4">Selected Products:</h5>
+    <ul>
+        @foreach (var product in SelectedProducts)
+        {
+            <li>@product.Name</li>
+        }
+    </ul>
+}
+
+@code {
+    // Sample item type
+    public class Product
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+    }
+
+    // All available items
+    private List<Product> AllProducts = new()
+    {
+        new() { Name = "Laptop" },
+        new() { Name = "Keyboard" },
+        new() { Name = "Mouse" },
+        new() { Name = "Monitor" },
+        new() { Name = "Headphones" },
+    };
+
+    // Currently selected items
+    private List<Product> SelectedProducts = [];
+
+    // Event callback for when selection changes
+    private void OnSelectedItemsChanged(List<Product> newSelection)
+    {
+        SelectedProducts = newSelection;
+    }
+}
+
 ```
 
 
